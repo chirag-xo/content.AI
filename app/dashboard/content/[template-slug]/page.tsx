@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import FormSection from '../_components/FormSection'
 import OutputSection from '../_components/OutputSection'
 import { TEMPLATE } from '../../_components/TemplateListSection'
@@ -11,9 +11,11 @@ import { db } from '@/utils/db'
 import { AIOutput } from '@/utils/schema'
 import { useUser } from '@clerk/nextjs'
 import moment from 'moment'
+import {eq} from 'drizzle-orm'
 import { TotalUsageContext } from '@/app/(context)/TotalUsageContext'
 import { useRouter } from 'next/navigation'
 import { UpdateCreditUsageContext } from '@/app/(context)/UpadteCreditUsageContext'
+import { UserSubscriptionContext } from '@/app/(context)/UserSubscriptionContext'
 
 
 interface PROPS{
@@ -30,16 +32,46 @@ function CreateNewContent(props:PROPS) {
     const {totalUsage,setTotalUsage}=useContext(TotalUsageContext)
     const router=useRouter();
     const {UpadteCreditUsageContext,setUpdateCreditUsageContext}=useContext(UpdateCreditUsageContext)
-
+    const{userSubscription,setUserSubscription}=useContext(UserSubscriptionContext)
+    
+      const GetTotalUsage = (result: HISTORY[]) => {
+        let total: number = 0;
+        result.forEach((element) => {
+          total += Number(element.aiResponse?.length);
+        });
+        setTotalUsage(total);
+        console.log(total);
+      };
+        useEffect(() => {
+          user && GetData();
+        }, [UpadteCreditUsageContext,user]);
+        useEffect(() => {
+            if (totalUsage >= 10000 && !userSubscription) {
+                alert("You have reached your limit of 10,000 credits. Please upgrade your plan to continue using the service.");
+                router.push('/dashboard/billing');
+            }
+        }, [totalUsage, userSubscription]);
+    const GetData = async () => {
+        
+          /* @ts-ignore */
+        const result: HISTORY[] = await db
+          .select()
+          .from(AIOutput)
+          .where(
+            eq(AIOutput.createdBy, user?.primaryEmailAddress?.emailAddress || "")
+          );
+    
+        GetTotalUsage(result);
+      };
     
 
 
     const GenerateAIContent= async(formData:any)=>{
-        if(totalUsage>=10000){
-            alert("You have reached your limit of 10,000 credits. Please upgrade your plan to continue using the service.")
-            router.push('/dashboard/billing'); 
-            return;
-        }
+        // if(totalUsage>=10000&&!userSubscription){
+        //     alert("You have reached your limit of 10,000 credits. Please upgrade your plan to continue using the service.")
+        //     router.push('/dashboard/billing'); 
+        //     return;
+        // }
 
         setLoading(true);
         const SelectedPrompt=selectedTemplate?.aiprompt;
