@@ -6,7 +6,7 @@ import { AIOutput } from "@/utils/schema";
 import {UserSubscription} from "@/utils/schema"
 import { useUser } from "@clerk/nextjs";
 import React, { useContext, useEffect, useState } from "react";
-import { HISTORY } from "../history/page";
+import { HISTORY } from "@/app/dashboard/history/page";
 import { TotalUsageContext } from "@/app/(context)/TotalUsageContext";
 import { UpdateCreditUsageContext } from "@/app/(context)/UpadteCreditUsageContext";
 import { UserSubscriptionContext } from "@/app/(context)/UserSubscriptionContext";
