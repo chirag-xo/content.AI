@@ -16,7 +16,8 @@ import { TotalUsageContext } from '@/app/(context)/TotalUsageContext'
 import { useRouter } from 'next/navigation'
 import { UpdateCreditUsageContext } from '@/app/(context)/UpadteCreditUsageContext'
 import { UserSubscriptionContext } from '@/app/(context)/UserSubscriptionContext'
-import { HISTORY } from '../../history/page'
+import { HISTORY } from "@/app/dashboard/history/page";
+
 
 
 interface PROPS{
