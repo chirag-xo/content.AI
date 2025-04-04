@@ -38,9 +38,9 @@ async function History() {
         <p className='text-gray-500'>Search your previously generate AI content</p>
         <div className='grid grid-cols-7 font-bold bg-secondary mt-5 py-3 px-3'>
             <h2 className='col-span-2'>TEMPLATE</h2>
-            <h2 className='col-span-2'>AI RESP</h2>
-            <h2>DATE</h2>
-            <h2>WORDS</h2>
+            <h2 className='col-span-2'>AI RESPONSE</h2>
+            <h2 className='col-span-2'>DATE</h2>
+            <h2  className='col-span-1'>WORDS</h2>
             {/* <h2>COPY</h2> */}
         </div>
         {HistoryList.map((item:HISTORY,index:number)=>(
@@ -52,7 +52,8 @@ async function History() {
             </h2>
             <h2 className='col-span-2 line-clamp-2 mr-3'>{item?.aiResponse}</h2>
             <h2>{item.createdAt}</h2>
-            <h2>{item?.aiResponse.length}</h2>
+            <h2 className='col-span-1 text-right'>{item?.aiResponse.length}</h2>
+
             {/* <h2>
               <CopyButton aiResponse={item.aiResponse} />
             </h2> */}

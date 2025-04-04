@@ -1,4 +1,4 @@
-import { UserButton } from '@clerk/nextjs'
+import { UserButton, UserProfile } from '@clerk/nextjs'
 import { Search } from 'lucide-react'
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
@@ -107,7 +107,7 @@ function Header() {
         className='bg-primary text-white p-1 rounded-full text-xs px-2 hover:cursor-pointer'>
           🔥 Join Memebership just for ₹199/month 
         </h2>:<div></div>}
-        <UserButton/>
+          <UserButton/>
        </div>
     </div>
   )

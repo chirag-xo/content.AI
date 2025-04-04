@@ -109,6 +109,7 @@ function billing() {
             user?.primaryEmailAddress?.emailAddress || ""
           )
         );
+        console.log("RESULT : ", result)
       if (result.length > 0) {
         setUserSubscription(true);
       }
