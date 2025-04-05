@@ -3,7 +3,6 @@ import { Inter ,Prompt} from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 
-
 const inter = Prompt({
   subsets: ["latin"],
   weight: "500"
@@ -20,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
+    // @ts-ignore
     
     <ClerkProvider>
       <html lang="en">
