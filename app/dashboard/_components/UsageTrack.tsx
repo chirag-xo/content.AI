@@ -1,9 +1,10 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { db } from "@/utils/db";
 import { eq } from "drizzle-orm";
 import { AIOutput } from "@/utils/schema";
-import {UserSubscription} from "@/utils/schema"
+import { UserSubscription } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import React, { useContext, useEffect, useState } from "react";
 import { HISTORY } from "@/app/dashboard/history/page";
@@ -17,16 +18,17 @@ function UsageTrack() {
   const { user } = useUser();
   const { totalUsage, setTotalUsage } = useContext(TotalUsageContext);
   const [maxWords, setMaxWords] = useState(10000);
-  const { UpadteCreditUsageContext, setUpdateCreditUsageContext } = useContext(
-    UpdateCreditUsageContext
-  );
-  const { userSubscription, setUserSubscription } = useContext(
-    UserSubscriptionContext
-  );
-
+  const { UpadteCreditUsageContext } = useContext(UpdateCreditUsageContext);
+  const { userSubscription, setUserSubscription } = useContext(UserSubscriptionContext);
   const [loading, setLoading] = useState(false);
-  // const { user } = useUser();
-  // const {userSubscription,setUserSubscription}=useContext(UserSubscriptionContext);
+
+  // Load Razorpay script once
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   const CreateSubscription = () => {
     setLoading(true);
@@ -40,6 +42,7 @@ function UsageTrack() {
       }
     );
   };
+
   const OnPayment = (subId: string) => {
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -56,9 +59,14 @@ function UsageTrack() {
     };
 
     try {
-      // @ts-ignore
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      if (typeof window !== "undefined" && window.Razorpay) {
+        // @ts-ignore
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        console.error("Razorpay is not loaded yet.");
+        setLoading(false);
+      }
     } catch (e) {
       console.log("Try Again...", e);
       setLoading(false);
@@ -89,41 +97,27 @@ function UsageTrack() {
   }, [UpadteCreditUsageContext && user]);
 
   const GetData = async () => {
-    
-      /* @ts-ignore */
+    /* @ts-ignore */
     const result: HISTORY[] = await db
       .select()
       .from(AIOutput)
-      .where(
-        eq(AIOutput.createdBy, user?.primaryEmailAddress?.emailAddress || "")
-      );
-
+      .where(eq(AIOutput.createdBy, user?.primaryEmailAddress?.emailAddress || ""));
     GetTotalUsage(result);
   };
-  const IsUserScubscribed = async () => {
-    try{
-    const result = await db 
-  .select()
-  .from(UserSubscription) // Ensure correct casing
-  .where(
-    eq(
-        UserSubscription.email,
-      user?.primaryEmailAddress?.emailAddress || ""
-    )
-  );
-  if (result.length > 0) {
-    setUserSubscription(true);
-    setMaxWords(100000);
-  }
-}
-  catch(e){
-    console.log("Error in IsUserSubscribed",e);
-  }
 
-    // if (result) {
-    //   setUserSubscription(true);
-    //   setMaxWords(100000);
-    // }
+  const IsUserScubscribed = async () => {
+    try {
+      const result = await db
+        .select()
+        .from(UserSubscription)
+        .where(eq(UserSubscription.email, user?.primaryEmailAddress?.emailAddress || ""));
+      if (result.length > 0) {
+        setUserSubscription(true);
+        setMaxWords(100000);
+      }
+    } catch (e) {
+      console.log("Error in IsUserSubscribed", e);
+    }
   };
 
   const GetTotalUsage = (result: HISTORY[]) => {
@@ -134,6 +128,7 @@ function UsageTrack() {
     setTotalUsage(total);
     console.log(total);
   };
+
   return (
     <div className="m-5">
       <div className="bg-primary text-white p-3 rounded-lg">
@@ -142,22 +137,27 @@ function UsageTrack() {
           <div
             className="h-2 bg-white rounded-full"
             style={{
-            width: (!userSubscription ? Math.min( ((totalUsage / maxWords) * 100),100) : (totalUsage / maxWords) * 100 ) + "%",
+              width:
+                (!userSubscription
+                  ? Math.min((totalUsage / maxWords) * 100, 100)
+                  : (totalUsage / maxWords) * 100) + "%",
             }}
           ></div>
         </div>
         <h2 className="text-xs my-2">
-          {totalUsage}/{maxWords}credits used{" "}
+          {totalUsage}/{maxWords} credits used
         </h2>
       </div>
-      {!userSubscription ? <Button
-        onClick={() => CreateSubscription()}
-        className="w-full rounded-full mt-5 p-5 gap-2 items-center flex justify-center border-2 border-[#704ef8] text-[#704ef8] bg-white transition duration-300 hover:bg-[#704ef8] hover:text-white"
-      >
-        Upgrade Plan
-      </Button>:
-      <div></div>
-      }
+      {!userSubscription ? (
+        <Button
+          onClick={() => CreateSubscription()}
+          className="w-full rounded-full mt-5 p-5 gap-2 items-center flex justify-center border-2 border-[#704ef8] text-[#704ef8] bg-white transition duration-300 hover:bg-[#704ef8] hover:text-white"
+        >
+          Upgrade Plan
+        </Button>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 }

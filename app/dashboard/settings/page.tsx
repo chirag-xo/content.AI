@@ -1,12 +1,16 @@
-import { UserProfile } from '@clerk/nextjs'
-import React from 'react'
+import { UserProfile } from '@clerk/nextjs';
+import React from 'react';
 
-function settings() {
+function Settings() {
   return (
-    <div className='flex items-center justify-center h-full'>
-        <UserProfile routing="hash" />
+    <div className="flex justify-center items-start min-h-screen px-4 sm:px-6 md:px-8 pt-24 pb-10">
+      <div className="w-full max-w-4xl">
+        <UserProfile
+          routing="hash"
+        />
+      </div>
     </div>
-  )
+  );
 }
 
-export default settings
+export default Settings;
