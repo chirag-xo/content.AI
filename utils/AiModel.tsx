@@ -9,7 +9,8 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || "");
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
+  // Use the stable Gemini model — not the old beta path
+  model: "gemini-2.0-flash", // or "gemini-1.5-flash-latest"
 });
 
 const generationConfig = {
@@ -19,6 +20,7 @@ const generationConfig = {
   maxOutputTokens: 8192,
 };
 
+// Chat session
 export const chatSession = model.startChat({
   generationConfig,
   history: [],
