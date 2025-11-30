@@ -4,7 +4,7 @@ export default [
         desc : 'An AI tool that generates blog title depends on your blog information',
         category : 'Blog',
         icon : 'https://cdn-icons-png.flaticon.com/128/4693/4693265.png',
-        aiprompt : 'Give me 5 blog topic ideas in bullet wise only based on given niche & outline and give me result in Rich text editor format',
+        aiprompt : 'Give me 5 blog topic ideas in bullet wise only based on given niche & outline',
         slug : 'generate-blog-title',
         form : [
             {
@@ -29,7 +29,7 @@ export default [
             desc: 'Craft engaging Instagram captions based on your photo or topic.',
             category: 'Instagram',
             icon: 'https://cdn-icons-png.flaticon.com/128/5721/5721461.png',
-            aiprompt: 'Generate 5 short , creative and engaging Instagram captions for the following content: [Content]. Include relevant hashtags and give me result in Rich text editor format .',
+            aiprompt: 'Generate 5 short , creative and engaging Instagram captions for the following content: [Content]. Include relevant hashtags .',
             slug: 'instagram-caption-generator',
             form: [
                 {
